@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PARIS — Six Days (Loud Edition)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D0C12;
+    --paper:#FBF4E4;
+    --ink:#16131C;
+    --c1:#C6FF3A;
+    --c2:#00E0B8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:"Bricolage Grotesque",sans-serif;
+    background:var(--bg);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100dvh;padding:20px 12px;position:relative;overflow:hidden;
+  }
+  /* moving neon blobs */
+  .blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.55;z-index:0;transition:background .6s ease;}
+  .b1{width:46vw;height:46vw;background:var(--c1);top:-12vh;left:-8vw;animation:float1 14s ease-in-out infinite;}
+  .b2{width:42vw;height:42vw;background:var(--c2);bottom:-14vh;right:-8vw;animation:float2 17s ease-in-out infinite;}
+  .b3{width:30vw;height:30vw;background:var(--c1);bottom:10vh;left:20vw;opacity:.3;animation:float1 20s ease-in-out infinite reverse;}
+  @keyframes float1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,5vh) scale(1.15)}}
+  @keyframes float2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-7vw,-4vh) scale(1.2)}}
+  body::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* floating sparkles */
+  .spark{position:fixed;z-index:1;font-family:"Space Mono";pointer-events:none;color:var(--c1);opacity:.5;transition:color .6s;}
+  .s1{top:14%;left:8%;font-size:24px;animation:spin 9s linear infinite;}
+  .s2{top:72%;left:12%;font-size:18px;color:var(--c2);animation:spin 12s linear infinite reverse;}
+  .s3{top:22%;right:9%;font-size:30px;color:var(--c2);animation:bob 6s ease-in-out infinite;}
+  .s4{top:80%;right:14%;font-size:20px;animation:spin 7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+  .phone{position:relative;width:404px;max-width:100%;height:min(862px,95dvh);z-index:5;}
+  .screen{
+    position:relative;width:100%;height:100%;border-radius:30px;overflow:hidden;
+    background:#100E16;display:flex;flex-direction:column;
+    border:3px solid #000;
+    box-shadow:0 0 0 3px var(--c1),0 18px 50px rgba(0,0,0,.6),0 0 60px -10px var(--c1);
+    transition:box-shadow .6s ease;
+  }
+  .screen::before{content:"";position:absolute;inset:0;z-index:0;opacity:.5;transition:background .6s;
+    background:radial-gradient(120% 60% at 50% -10%, var(--c1), transparent 60%);}
+
+  /* marquee */
+  .marquee{flex:0 0 auto;background:var(--c1);color:#000;overflow:hidden;white-space:nowrap;
+    border-bottom:3px solid #000;position:relative;z-index:3;transition:background .6s;}
+  .marquee div{display:inline-block;padding:7px 0;font-family:"Anton";font-size:13px;letter-spacing:1px;
+    text-transform:uppercase;animation:scroll 18s linear infinite;}
+  .marquee span{padding:0 14px;}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* header */
+  .hdr{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:12px 18px 6px;z-index:3;}
+  .wordmark{font-family:"Anton";font-size:20px;letter-spacing:1px;color:#fff;text-shadow:2px 2px 0 var(--c1);transition:text-shadow .6s;}
+  .count{font-family:"Space Mono";font-weight:700;font-size:11px;color:#000;background:var(--c1);padding:4px 9px;border-radius:20px;border:2px solid #000;transition:background .6s;}
+
+  .scroll{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:6px 16px 22px;z-index:2;}
+  .scroll::-webkit-scrollbar{display:none;}
+
+  /* hero */
+  .hero{position:relative;padding:8px 2px 6px;}
+  .bignum{position:absolute;top:-22px;right:-6px;font-family:"Anton";font-size:140px;line-height:1;
+    color:transparent;-webkit-text-stroke:2px var(--c1);opacity:.35;z-index:0;animation:bob 7s ease-in-out infinite;transition:-webkit-text-stroke-color .6s;}
+  .stub{display:inline-block;font-family:"Space Mono";font-weight:700;font-size:11px;letter-spacing:1px;
+    text-transform:uppercase;background:#fff;color:#000;padding:5px 11px;border:2px solid #000;border-radius:6px;
+    transform:rotate(-2deg);box-shadow:3px 3px 0 var(--c2);transition:box-shadow .6s;}
+  .htitle{font-family:"Bricolage Grotesque";font-weight:800;font-size:34px;line-height:.98;margin-top:14px;
+    letter-spacing:-1px;color:#fff;text-shadow:3px 3px 0 var(--c1);max-width:92%;transition:text-shadow .6s;position:relative;z-index:1;}
+  .hsub{font-family:"Bricolage Grotesque";font-size:13.5px;line-height:1.45;color:#D7D2E0;margin-top:11px;max-width:33ch;position:relative;z-index:1;}
+  .fit{margin-top:13px;position:relative;z-index:1;max-width:34ch;}
+  .wx{display:inline-block;font-family:"Space Mono";font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase;background:var(--c1);color:#000;border:2px solid #000;border-radius:18px;padding:4px 11px;transform:rotate(-1.5deg);transition:background .6s;}
+  .dress{display:block;font-family:"Space Mono";font-weight:700;font-size:11px;color:#D7D2E0;line-height:1.4;margin-top:9px;}
+  .fit.heat .wx{font-family:"Anton";font-size:16px;letter-spacing:.5px;background:#FF2E2E;color:#fff;border:3px solid #000;padding:7px 15px;border-radius:14px;animation:heatpulse 1.6s ease-in-out infinite;}
+  @keyframes heatpulse{0%,100%{transform:rotate(-1.5deg) scale(1)}50%{transform:rotate(-1.5deg) scale(1.07)}}
+
+  /* cards */
+  .card{position:relative;background:var(--paper);color:var(--ink);border:2.5px solid #000;border-radius:16px;
+    padding:16px 16px 14px;margin:20px 4px 0;box-shadow:5px 6px 0 #000;}
+  .card:nth-child(odd){transform:rotate(-1deg);}
+  .card:nth-child(even){transform:rotate(1deg);}
+  .card .tape{position:absolute;top:-11px;left:50%;width:74px;height:22px;transform:translateX(-50%) rotate(-3deg);
+    background:var(--c2);opacity:.85;border:1.5px dashed rgba(0,0,0,.35);transition:background .6s;}
+  .ctime{display:inline-block;font-family:"Space Mono";font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;
+    background:var(--c1);color:#000;padding:4px 10px;border:2px solid #000;border-radius:20px;transform:rotate(-1.5deg);transition:background .6s;}
+  .cname{font-family:"Bricolage Grotesque";font-weight:800;font-size:22px;line-height:1.05;margin-top:10px;letter-spacing:-.5px;}
+  .ctype{font-family:"Space Mono";font-size:11px;color:#6A6275;margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+  .cbody{font-size:13.5px;line-height:1.5;color:#332E3C;margin-top:10px;}
+  .cbody b{background:var(--c1);padding:0 3px;border-radius:3px;font-weight:700;color:#000;box-decoration-break:clone;-webkit-box-decoration-break:clone;transition:background .6s;}
+  .cbody i{font-style:italic;font-weight:600;color:#000;}
+  .meta{margin-top:13px;border-top:2px dashed rgba(0,0,0,.18);padding-top:10px;display:grid;gap:6px;}
+  .meta .row{display:grid;grid-template-columns:58px 1fr;gap:9px;align-items:baseline;}
+  .mk{font-family:"Space Mono";font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#9A91A2;}
+  .mv{font-family:"Space Mono";font-size:11.5px;font-weight:700;color:#16131C;line-height:1.35;}
+  .maplinks{margin-top:11px;display:flex;gap:8px;flex-wrap:wrap;}
+  .maplinks a{font-family:"Space Mono";font-weight:700;font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;background:#16131C;color:#fff;border:2px solid #000;border-radius:18px;padding:4px 11px;text-decoration:none;}
+  .card.feature .maplinks a{background:#000;color:var(--c1);transition:color .6s;}
+
+  .stamp{position:absolute;top:8px;right:10px;font-family:"Anton";font-size:13px;letter-spacing:.5px;color:#000;
+    border:2.5px solid #000;border-radius:8px;padding:3px 8px;transform:rotate(9deg);background:var(--c1);
+    text-transform:uppercase;transition:background .6s;}
+
+  /* feature card */
+  .card.feature{background:linear-gradient(135deg,var(--c1),var(--c2));border:3px solid #000;box-shadow:6px 7px 0 #000,0 0 40px -6px var(--c1);}
+  .card.feature .ctime{background:#000;color:#fff;}
+  .card.feature .tape{background:#000;opacity:1;border:none;}
+  .card.feature .cname{font-size:30px;text-transform:uppercase;}
+  .card.feature .ctype{color:rgba(0,0,0,.7);font-weight:700;}
+  .card.feature .cbody{color:#14121A;}
+  .card.feature .cbody b{background:#000;color:#fff;}
+  .card.feature .cbody i{color:#14121A;}
+  .card.feature .meta{border-top-color:rgba(0,0,0,.35);}
+  .card.feature .mk{color:rgba(0,0,0,.6);}
+  .card.feature .mv{color:#000;}
+  .card.feature .stamp{background:#000;color:var(--c1);font-size:15px;animation:wobble 2.6s ease-in-out infinite;}
+  @keyframes wobble{0%,100%{transform:rotate(9deg) scale(1)}50%{transform:rotate(5deg) scale(1.08)}}
+
+  /* day bar */
+  .daybar{flex:0 0 auto;display:flex;gap:6px;justify-content:center;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    background:#0A090E;border-top:3px solid #000;z-index:3;}
+  .tab{flex:1;border:2px solid #2A2733;background:transparent;cursor:pointer;font-family:"Space Mono";font-weight:700;
+    padding:7px 2px;border-radius:11px;display:flex;flex-direction:column;align-items:center;gap:1px;transition:all .2s;}
+  .tab .td{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#7A7385;}
+  .tab .tn{font-family:"Anton";font-size:16px;color:#fff;line-height:1;}
+  .tab.active{background:var(--c1);border-color:#000;transform:translateY(-3px) rotate(-2deg);box-shadow:2px 3px 0 #000;}
+  .tab.active .td,.tab.active .tn{color:#000;}
+
+  /* nav */
+  .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:8;width:46px;height:46px;border-radius:50%;
+    border:3px solid #000;background:var(--c1);color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    font-family:"Anton";font-size:22px;box-shadow:3px 4px 0 #000;transition:transform .15s,background .6s;}
+  .nav:active{transform:translateY(-50%) scale(.9);}
+  .nav.prev{left:-64px;} .nav.next{right:-64px;}
+  .nav[disabled]{opacity:.3;pointer-events:none;}
+  @media(max-width:600px){ .nav{display:none;} }
+
+  /* entrance animation */
+  .anim{opacity:0;}
+  .show .anim{animation:pop .5s cubic-bezier(.18,1.5,.5,1) forwards;}
+  .show .anim:nth-child(1){animation-delay:.02s}
+  .show .anim:nth-child(2){animation-delay:.10s}
+  .show .anim:nth-child(3){animation-delay:.18s}
+  .show .anim:nth-child(4){animation-delay:.26s}
+  .show .anim:nth-child(5){animation-delay:.34s}
+  @keyframes pop{0%{opacity:0;transform:translateY(26px) rotate(var(--rot,0deg)) scale(.85)}
+    100%{opacity:1;transform:translateY(0) rotate(var(--rot,0deg)) scale(1)}}
+  .card:nth-child(odd){--rot:-1deg;} .card:nth-child(even){--rot:1deg;}
+</style>
+</head>
+<body>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="spark s1">✦</div><div class="spark s2">★</div><div class="spark s3">✺</div><div class="spark s4">✦</div>
+
+  <button class="nav prev" id="prev">‹</button>
+  <div class="phone">
+    <div class="screen" id="screen">
+      <div class="marquee"><div id="mq"></div></div>
+      <div class="hdr"><div class="wordmark">PARIS</div><div class="count" id="count">DAY 1/6</div></div>
+      <div class="scroll" id="scroll"></div>
+      <div class="daybar" id="daybar"></div>
+    </div>
+  </div>
+  <button class="nav next" id="next">›</button>
+
+<script>
+const DAYS = [
+ { tabD:"Wed",tabN:"17",num:"1",dow:"Wed · 17 June",title:"Saint-Germain",
+   sub:"The Left Bank's literary heart — café terraces, art galleries and Le Bon Marché.",
+   wx:"≈31° · Hot & sunny ☀",dress:"Light, breathable clothes — come comfortable, Paris Buenos Aires is a down-to-earth room.",
+   c1:"#C6FF3A",c2:"#00E0B8",cards:[
+   { time:"Dinner · 8:30 pm",name:"Paris Buenos Aires",type:"Argentinian fire-grill",stamp:"8:30",
+     body:"Chef Fernando de Tomaso (of Biondi) bridges his two cities over live embers — golden empanadas and premium grilled beef in a candlelit room of wood and leather, near Le Bon Marché. <b>Order the côte de bœuf à partager with a Saint-Émilion grand cru.</b>",
+     meta:[["Booked","Table at 8:30 pm"],["Where","11 rue Dupin, 75006"],["Hours","Mon–Sat · 19:00–23:00"]] }]},
+ { tabD:"Thu",tabN:"18",num:"2",dow:"Thu · 18 June",title:"Marais + the big show",
+   sub:"Medieval lanes, Place des Vosges and galleries — then the lights of Saint-Denis.",
+   wx:"≈35° · Scorching ☀",dress:"Peak heat — loose, breathable, sun hat & water. For the stadium: comfy shoes, a light layer for the walk back, small bag only.",
+   c1:"#FF2E88",c2:"#FFC93C",cards:[
+   { time:"Lunch · 1:00 pm",name:"Tycoz",type:"Crêperie & oyster bar",stamp:"1 PM",
+     body:"A pocket of Brittany in the Marais: 100% buckwheat galettes with Bordier butter, just-shucked Cancale oysters and artisanal cider — on a leafy terrace by square Léopold-Achille. <b>No. 5 oysters, a complète, a lemon crêpe.</b>",
+     meta:[["Booked","1:00 pm"],["Where","4 rue du Parc Royal, 75003"],["Hours","Tue–Sat 12–23 · Sun 12–17"]] },
+   { time:"After lunch · walk-in",name:"Bar Nouveau",type:"Tiny 50 Best cocktail bar",stamp:"WALK-IN",
+     body:"A jewel-box cocktail bar on a quiet Marais street — about ten seats, no bookings, a short and brilliant menu (that Irish coffee, the Gustav). On the World's 50 Best list. <b>Just walk in; go off-peak to skip the wait.</b>",
+     meta:[["Where","5 rue des Haudriettes, 75003"],["Hours","Daily · 15:00–01:00"],["Heads-up","~10 seats · no bookings"]] },
+   { feature:true,time:"Evening · the main event",name:"Bruno Mars",type:"The Romantic Tour · Stade de France",stamp:"HEADLINER",
+     body:"His first-ever stadium world tour, with <b>Anderson .Paak</b> opening as DJ Pee .Wee. The hits wall-to-wall — <i>Uptown Funk, Locked Out of Heaven,</i> the Silk Sonic groove — for 80,000 voices under the Saint-Denis lights.",
+     meta:[["Venue","Stade de France, Saint-Denis"],["Doors","~18:00 · show ~20:00"]] }]},
+ { tabD:"Fri",tabN:"19",num:"3",dow:"Fri · 19 June",title:"Picnic + big night",
+   sub:"A grand Le Nôtre park for a long picnic, then karaoke and a Bourse night out.",
+   heat:true,wx:"⚠ HEAT PEAK · ≈37°",dress:"Hottest day of the trip — picnic in the shade, hats, sunscreen and lots of water. Smart-casual for Daroco & Danico; it's a chic room.",
+   c1:"#36C5FF",c2:"#B06BFF",cards:[
+   { time:"Afternoon · picnic",name:"Parc de Sceaux",type:"Grand Le Nôtre garden",stamp:"PICNIC",
+     body:"André Le Nôtre's other masterpiece — about a quarter the size of Versailles, with formal parterres, a grand canal and long shady alleys. Spread a blanket with bread, cheese and rosé. <b>Grab a shaded spot — it's a scorcher.</b>",
+     meta:[["Where","Domaine de Sceaux, 92330"],["Getting there","RER B → Parc de Sceaux"],["Open","Daily · 7:00–21:00"]] },
+   { time:"Evening · karaoke",name:"Bam Karaoke — Madeleine",type:"Private karaoke + cocktails",stamp:"SING",
+     body:"Japanese-style private boxes glowing in RGB neon, a 45,000-song catalogue and seriously good cocktails. Book your <b>own</b> room — no strangers, just your crew. Warm up the night before dinner.",
+     meta:[["When","Early evening"],["Where","4 rue de Caumartin, 75009"],["Room","6–30 · not booked yet"]] },
+   { time:"Cocktails → 9 pm dinner",name:"Daroco & Danico",type:"Bourse · 50 Best bar + Italian",stamp:"9 PM",
+     body:"Two-in-one on rue Vivienne: slip into <b>Danico</b> — the hidden World's 50 Best bar behind the restaurant — for cocktails, then dinner at <b>Daroco</b> at 9, a buzzy Italian in a glorious former couture atelier. Go early for the bar.",
+     meta:[["Booked","Daroco · 9:00 pm dinner"],["Cocktails","Danico · from 5 pm (50 Best)"],["Where","6 rue Vivienne, 75002"]] }]},
+ { tabD:"Sat",tabN:"20",num:"4",dow:"Sat · 20 June",title:"Canal & the east",
+   sub:"Tree-lined water, iron footbridges, indie shops and long quayside apéros.",
+   wx:"≈32° · Hot ☀",dress:"No shade on the water — hat, sunglasses, sunscreen, water. Relaxed and cool for the evening bars.",
+   c1:"#FF7A1A",c2:"#16D6C1",cards:[
+   { time:"On the water · 6–8 pm",name:"Akwa",type:"Licence-free boat",stamp:"BOOKED",
+     body:"Take the helm of a silent electric boat on the Bassin de la Villette — <b>no licence, no experience</b> needed. Bring drinks and a picnic and drift toward Buttes-Chaumont in the golden evening light.",
+     meta:[["Booked","Big boat · 9 people · 6–8 pm"],["Where","37 Quai de la Seine, 75019"]] },
+   { time:"Dinner · 8:30 pm",name:"Amagat",type:"Hidden Catalan tapas + wine",stamp:"8:30",
+     body:"“Amagat” means <i>hidden</i> in Catalan — and it is, down a cobbled alley near Père-Lachaise. Fairy-lit garden, long counter, small plates: ham croquetas, gochujang lamb chops, churros, Penedès wines.",
+     meta:[["Booked","8:30 pm"],["Where","Alley off bd de Charonne, 75020"],["Hours","Wed–Sun · 19:00–22:30"]] },
+   { time:"Night · soir",name:"Bambino or Fréquence",type:"Two vinyl bars — pick one",stamp:"PICK 1",
+     body:"Two ways to end the night, a short walk apart in the 11th. <b>Bambino</b> — dim, candlelit, natural wine and slow vinyl that turns dance-y late. <b>Fréquence</b> — a wall of records, soul-funk-disco and cocktails over hand-carved ice, dance floor by midnight.",
+     meta:[["Either","Bambino · 25 rue Saint-Sébastien"],["Or","Fréquence · 20 rue Keller"]] }]},
+ { tabD:"Sun",tabN:"21",num:"5",dow:"Sun · 21 June",title:"Pigalle + Fête",
+   sub:"Once risqué, now all cocktail bars and record shops, with Montmartre rising above.",
+   wx:"≈34° · Very hot ☀",dress:"Very hot today — light fabrics for the garden brunch, then comfy shoes and water for the festival.",
+   c1:"#FF3CAC",c2:"#FFD23C",cards:[
+   { time:"Brunch · 12:00",name:"Hôtel Particulier Montmartre",type:"Secret-garden mansion brunch",stamp:"BOOKED",
+     body:"Hidden up a private lane off Avenue Junot — a 19th-century mansion (once a Hermès home) wrapped in the biggest private garden in Paris. Weekend brunch on the terrace: pastries, eggs en cocotte, small plates, sweets. <b>Book ahead — it's tiny.</b>",
+     meta:[["Booked","Brunch · 12:00 sitting"],["Where","23 Avenue Junot, 75018"],["Hours","Sat–Sun · 12:00 & 14:30"]] },
+   { feature:true,time:"Afternoon → night",name:"Fête de la Musique",type:"Free music · summer solstice",stamp:"FREE",
+     body:"Longest day of the year, the whole country plays. Every square, terrace and street corner becomes a stage — <b>classical to techno, all free.</b> Pigalle and Montmartre buzz hardest after dark.",
+     meta:[["Where","All across Paris — outdoors"],["When","Afternoon until very late"]] },
+   { time:"Between sets",name:"The neighbourhood",type:"SoPi & Montmartre",stamp:"VIEW",
+     body:"Climb to <b>Sacré-Cœur</b> for the city laid out below, browse the record shops, then drop onto a terrace on rue Frochot or rue des Martyrs.",
+     meta:[["Walk","Pigalle → rue des Martyrs → Sacré-Cœur"]] }]},
+ { tabD:"Mon",tabN:"22",num:"6",dow:"Mon · 22 June",title:"Soft landing",
+   sub:"Nothing on the schedule — a slow morning before you fly home.",
+   wx:"≈36° · Hot ☀",dress:"",
+   c1:"#FF8A5B",c2:"#7AD0FF",cards:[
+   { time:"Morning",name:"One last flânerie",type:"No agenda, on purpose",stamp:"CHILL",
+     body:"A final croissant and café crème, a slow walk along the Seine or through the <b>Jardin du Luxembourg</b>, and whatever small thing you didn't get to.",
+     meta:[["Idea","Luxembourg · the quais · a last café"],["Take home","Cheese, a bottle, the photos"]] },
+   { time:"To the airport",name:"Getting out",type:"Give yourself time",stamp:"FLY",
+     body:"Head out earlier than feels necessary — Monday traffic and security are unpredictable. Keep your transit pass handy until you're through the gate.",
+     meta:[["CDG","RER B north · ~35–45 min"],["Orly","Tram T7 / Orlyval, or M14"]] }]}
+];
+
+const scroll=document.getElementById('scroll'),daybar=document.getElementById('daybar'),
+  count=document.getElementById('count'),mq=document.getElementById('mq'),
+  prevB=document.getElementById('prev'),nextB=document.getElementById('next'),screen=document.getElementById('screen');
+let cur=0;
+
+const mqText='PARIS ✦ 17–22 JUNE ✦ BRUNO MARS ✦ PICNIC AT SCEAUX ✦ 50 BEST COCKTAILS ✦ A BOAT ✦ GARDEN BRUNCH ✦ FÊTE DE LA MUSIQUE ✦ ';
+mq.innerHTML='<span>'+mqText+'</span><span>'+mqText+'</span>';
+
+DAYS.forEach((d,i)=>{const t=document.createElement('button');t.className='tab';
+  t.innerHTML=`<span class="td">${d.tabD}</span><span class="tn">${d.tabN}</span>`;
+  t.onclick=()=>go(i);daybar.appendChild(t);});
+
+function meta(m){return `<div class="meta">${m.map(r=>`<div class="row"><span class="mk">${r[0]}</span><span class="mv">${r[1]}</span></div>`).join('')}</div>`;}
+function mapsFor(name){
+  const U=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+  let L=[];
+  if(name.includes('Buenos Aires')) L=[['Map',U('Paris Buenos Aires 11 rue Dupin 75006 Paris')]];
+  else if(name.includes('Bam Karaoke')) L=[['Map',U('BAM Karaoke Box Madeleine 4 rue de Caumartin 75009 Paris')]];
+  else if(name==='Tycoz') L=[['Map',U('Tycoz Crêperie Oyster Bar 4 rue du Parc Royal 75003 Paris')]];
+  else if(name.includes('Bruno Mars')) L=[['Map',U('Stade de France Saint-Denis')]];
+  else if(name.includes('Two parks')) L=[['Map',U('Disneyland Paris')]];
+  else if(name==='Akwa') L=[['Map',U('Akwa 37 Quai de la Seine 75019 Paris')]];
+  else if(name==='Amagat') L=[['Map',U('Amagat restaurant Paris 20e')]];
+  else if(name.includes('Bambino')) L=[['Bambino',U('Bambino 25 rue Saint-Sébastien 75011 Paris')],['Fréquence',U('Fréquence 20 rue Keller 75011 Paris')]];
+  else if(name.includes('Particulier')) L=[['Map',U('Hôtel Particulier Montmartre 23 Avenue Junot 75018 Paris')]];
+  else if(name==='The neighbourhood') L=[['Sacré-Cœur',U('Sacré-Cœur Montmartre Paris')]];
+  else if(name.includes('flânerie')) L=[['Luxembourg',U('Jardin du Luxembourg Paris')]];
+  else if(name.includes('Parc de Sceaux')) L=[['Map',U('Parc de Sceaux Domaine de Sceaux')]];
+  else if(name.includes('Daroco')) L=[['Daroco',U('Daroco Bourse 6 rue Vivienne 75002 Paris')],['Danico',U('Danico 6 rue Vivienne 75002 Paris')]];
+  else if(name.includes('Bar Nouveau')) L=[['Map',U('Bar Nouveau 5 rue des Haudriettes 75003 Paris')]];
+  if(!L.length) return '';
+  return '<div class="maplinks">'+L.map(l=>`<a href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join('')+'</div>';
+}
+function card(c){return `<div class="card anim${c.feature?' feature':''}"><div class="tape"></div>${c.stamp?`<div class="stamp">${c.stamp}</div>`:''}
+  <div class="ctime">${c.time}</div><div class="cname">${c.name}</div><div class="ctype">${c.type}</div>
+  <div class="cbody">${c.body}</div>${meta(c.meta)}${mapsFor(c.name)}</div>`;}
+
+function render(i){const d=DAYS[i];
+  document.documentElement.style.setProperty('--c1',d.c1);
+  document.documentElement.style.setProperty('--c2',d.c2);
+  count.textContent=`DAY ${i+1}/6`;
+  scroll.innerHTML=`<div class="hero anim"><div class="bignum">${d.num}</div>
+    <div class="stub">${d.dow}</div><h1 class="htitle">${d.title}</h1><div class="hsub">${d.sub}</div><div class="fit${d.heat?' heat':''}"><span class="wx">${d.wx}</span>${d.dress?`<span class="dress">${d.dress}</span>`:''}</div></div>
+    ${d.cards.map(card).join('')}`;
+  scroll.classList.remove('show');void scroll.offsetWidth;scroll.classList.add('show');
+  scroll.scrollTop=0;
+  [...daybar.children].forEach((t,k)=>t.classList.toggle('active',k===i));
+  prevB.disabled=i===0;nextB.disabled=i===DAYS.length-1;}
+function go(i){if(i<0||i>=DAYS.length||i===cur)return;cur=i;render(i);}
+
+prevB.onclick=()=>go(cur-1);nextB.onclick=()=>go(cur+1);
+document.onkeydown=e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);};
+let sx=0,sy=0,sw=false;
+screen.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;sw=true;},{passive:true});
+screen.addEventListener('touchend',e=>{if(!sw)return;sw=false;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.5){dx<0?go(cur+1):go(cur-1);}});
+render(0);
+</script>
+</body>
+</html>
